@@ -1,30 +1,32 @@
-import { useState, useCallback, ChangeEvent, useEffect } from 'react';
+import { useState, useCallback, ChangeEvent, useEffect } from "react";
 
-import Head from 'next/head';
+import Head from "next/head";
 
-import ExtendedSidebarLayout from 'src/layouts/ExtendedSidebarLayout';
-import { Authenticated } from 'src/components/Authenticated';
+import ExtendedSidebarLayout from "src/layouts/ExtendedSidebarLayout";
+import { Authenticated } from "src/components/Authenticated";
 
-import Footer from 'src/components/Footer';
+import Footer from "src/components/Footer";
 
-import { Box, Tabs, Tab, Grid, styled } from '@mui/material';
+import { Box, Tabs, Tab, Grid, styled } from "@mui/material";
 
-import type { User } from 'src/models/user';
-import { usersApi } from 'src/mocks/users';
+import type { User } from "src/models/user";
+import { usersApi } from "src/mocks/users";
 
-import { useRefMounted } from 'src/hooks/useRefMounted';
-import { useTranslation } from 'react-i18next';
+import { useRefMounted } from "src/hooks/useRefMounted";
+import { useTranslation } from "react-i18next";
 
-import ProfileCover from 'src/content/Management/Users/single/ProfileCover';
-import RecentActivity from 'src/content/Management/Users/single/RecentActivity';
-import Feed from 'src/content/Management/Users/single/Feed';
-import PopularTags from 'src/content/Management/Users/single/PopularTags';
-import MyCards from 'src/content/Management/Users/single/MyCards';
-import Addresses from 'src/content/Management/Users/single/Addresses';
-import ActivityTab from 'src/content/Management/Users/single/ActivityTab';
-import EditProfileTab from 'src/content/Management/Users/single/EditProfileTab';
-import NotificationsTab from 'src/content/Management/Users/single/NotificationsTab';
-import SecurityTab from 'src/content/Management/Users/single/SecurityTab';
+import ProfileCover from "src/content/Management/Users/single/ProfileCover";
+import RecentActivity from "src/content/Management/Users/single/RecentActivity";
+import Feed from "src/content/Management/Users/single/Feed";
+import PopularTags from "src/content/Management/Users/single/PopularTags";
+import MyCards from "src/content/Management/Users/single/MyCards";
+import Addresses from "src/content/Management/Users/single/Addresses";
+import ActivityTab from "src/content/Management/Users/single/ActivityTab";
+import EditProfileTab from "src/content/Management/Users/single/EditProfileTab";
+import NotificationsTab from "src/content/Management/Users/single/NotificationsTab";
+import SecurityTab from "src/content/Management/Users/single/SecurityTab";
+import { useGetUserByIdQuery } from "@/services/user";
+import { useRouter } from "next/router";
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -35,38 +37,29 @@ const TabsWrapper = styled(Tabs)(
 );
 
 function ManagementUsersView() {
-  const isMountedRef = useRefMounted();
-  const [user, setUser] = useState<User | null>(null);
+  const router = useRouter();
+  // const [user, setUser] = useState<User | null>(null);
   const { t }: { t: any } = useTranslation();
+  const { data: user, isLoading: isLoadingDrivers } = useGetUserByIdQuery({
+    // filter: JSON.stringify({
+    //   where: { role: "User" },
+    // }),
+    id: router?.query?.userId as string,
+    filter: undefined,
+  });
 
-  const [currentTab, setCurrentTab] = useState<string>('activity');
+  const [currentTab, setCurrentTab] = useState<string>("activity");
 
   const tabs = [
-    { value: 'activity', label: t('Activity') },
-    { value: 'edit_profile', label: t('Edit Profile') },
-    { value: 'notifications', label: t('Notifications') },
-    { value: 'security', label: t('Passwords/Security') }
+    { value: "activity", label: t("Activity") },
+    { value: "edit_profile", label: t("Edit Profile") },
+    { value: "notifications", label: t("Notifications") },
+    { value: "security", label: t("Passwords/Security") },
   ];
 
   const handleTabsChange = (_event: ChangeEvent<{}>, value: string): void => {
     setCurrentTab(value);
   };
-
-  const getUser = useCallback(async () => {
-    try {
-      const response = await usersApi.getUser();
-
-      if (isMountedRef()) {
-        setUser(response);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }, [isMountedRef]);
-
-  useEffect(() => {
-    getUser();
-  }, [getUser]);
 
   if (!user) {
     return null;
@@ -119,10 +112,10 @@ function ManagementUsersView() {
             </TabsWrapper>
           </Grid>
           <Grid item xs={12}>
-            {currentTab === 'activity' && <ActivityTab />}
-            {currentTab === 'edit_profile' && <EditProfileTab />}
-            {currentTab === 'notifications' && <NotificationsTab />}
-            {currentTab === 'security' && <SecurityTab />}
+            {currentTab === "activity" && <ActivityTab />}
+            {currentTab === "edit_profile" && <EditProfileTab />}
+            {currentTab === "notifications" && <NotificationsTab />}
+            {currentTab === "security" && <SecurityTab />}
           </Grid>
         </Grid>
       </Box>

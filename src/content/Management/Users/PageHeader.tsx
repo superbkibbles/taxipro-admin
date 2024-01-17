@@ -27,7 +27,9 @@ import {
 import AddTwoToneIcon from "@mui/icons-material/AddTwoTone";
 import { useSnackbar } from "notistack";
 import CloudUploadTwoToneIcon from "@mui/icons-material/CloudUploadTwoTone";
-import { useGetUserQuery } from "@/services/user";
+import { useCreateUserMutation, useGetUserQuery } from "@/services/user";
+import { useSignupUserMutation } from "@/services/auth";
+import { UserWithRelations } from "@/services/cars";
 
 const Input = styled("input")({
   display: "none",
@@ -80,6 +82,7 @@ function PageHeader() {
   const [open, setOpen] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
   const { data: user } = useGetUserQuery(undefined);
+  const [createUser, { isLoading }] = useCreateUserMutation();
   // const { user } = useAuth();
 
   const [publicProfile, setPublicProfile] = useState({
@@ -162,47 +165,64 @@ function PageHeader() {
         </DialogTitle>
         <Formik
           initialValues={{
+            name: "",
             email: "",
-            username: "",
-            first_name: "",
-            last_name: "",
-            password: "",
-            submit: null,
+            firstName: "",
+            lastName: "",
+            tempPassword: "",
+            personalNumber: "",
+            clearingNumber: 0,
+            isNew: true,
           }}
           validationSchema={Yup.object().shape({
-            username: Yup.string()
+            name: Yup.string()
               .max(255)
-              .required(t("The username field is required")),
-            first_name: Yup.string()
+              .required(t("The user name field is required")),
+            firstName: Yup.string()
               .max(255)
               .required(t("The first name field is required")),
-            last_name: Yup.string()
+            lastName: Yup.string()
               .max(255)
               .required(t("The last name field is required")),
             email: Yup.string()
               .email(t("The email provided should be a valid email address"))
               .max(255)
               .required(t("The email field is required")),
-            password: Yup.string()
+            tempPassword: Yup.string()
               .max(255)
               .required(t("The password field is required")),
           })}
           onSubmit={async (
-            _values,
+            _values: UserWithRelations,
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
             try {
-              await wait(1000);
-              resetForm();
+              const res = await createUser({
+                ..._values,
+                clearingNumber: Number(_values.clearingNumber),
+              });
               setStatus({ success: true });
               setSubmitting(false);
               handleCreateUserSuccess();
+              console.log(res);
             } catch (err) {
               console.error(err);
               setStatus({ success: false });
-              setErrors({ submit: err.message });
+              // setErrors({ submit: err.message });
               setSubmitting(false);
             }
+            // try {
+            //   await wait(1000);
+            //   resetForm();
+            //   setStatus({ success: true });
+            //   setSubmitting(false);
+            //   handleCreateUserSuccess();
+            // } catch (err) {
+            //   console.error(err);
+            //   setStatus({ success: false });
+            //   setErrors({ submit: err.message });
+            //   setSubmitting(false);
+            // }
           }}
         >
           {({
@@ -224,44 +244,42 @@ function PageHeader() {
                 <Grid container spacing={3}>
                   <Grid item xs={12} lg={7}>
                     <Grid container spacing={3}>
-                      {/* <Grid item xs={12}>
+                      <Grid item xs={12}>
                         <TextField
-                          error={Boolean(touched.username && errors.username)}
+                          error={Boolean(touched.name && errors.name)}
                           fullWidth
-                          helperText={touched.username && errors.username}
+                          helperText={touched.name && errors.name}
                           label={t("Username")}
-                          name="username"
+                          name="name"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.username}
-                          variant="outlined"
-                        />
-                      </Grid> */}
-                      <Grid item xs={12} md={6}>
-                        <TextField
-                          error={Boolean(
-                            touched.first_name && errors.first_name
-                          )}
-                          fullWidth
-                          helperText={touched.first_name && errors.first_name}
-                          label={t("First name")}
-                          name="first_name"
-                          onBlur={handleBlur}
-                          onChange={handleChange}
-                          value={values.first_name}
+                          value={values.name}
                           variant="outlined"
                         />
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <TextField
-                          error={Boolean(touched.last_name && errors.last_name)}
+                          error={Boolean(touched.firstName && errors.firstName)}
                           fullWidth
-                          helperText={touched.last_name && errors.last_name}
-                          label={t("Last name")}
-                          name="last_name"
+                          helperText={touched.firstName && errors.firstName}
+                          label={t("First name")}
+                          name="firstName"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          value={values.last_name}
+                          value={values.firstName}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          error={Boolean(touched.lastName && errors.lastName)}
+                          fullWidth
+                          helperText={touched.lastName && errors.lastName}
+                          label={t("Last name")}
+                          name="lastName"
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.lastName}
                           variant="outlined"
                         />
                       </Grid>
@@ -279,22 +297,62 @@ function PageHeader() {
                           variant="outlined"
                         />
                       </Grid>
-                      <Grid item xs={12}>
+                      <Grid item xs={12} md={6}>
                         <TextField
-                          error={Boolean(touched.password && errors.password)}
+                          error={Boolean(
+                            touched.personalNumber && errors.personalNumber
+                          )}
                           fullWidth
-                          margin="normal"
-                          helperText={touched.password && errors.password}
-                          label={t("Password")}
-                          name="password"
+                          helperText={
+                            touched.personalNumber && errors.personalNumber
+                          }
+                          label={t("Personal Number")}
+                          name="personalNumber"
                           onBlur={handleBlur}
                           onChange={handleChange}
-                          type="password"
-                          value={values.password}
+                          value={values.personalNumber}
                           variant="outlined"
                         />
                       </Grid>
+
                       <Grid item xs={12} md={6}>
+                        <TextField
+                          error={Boolean(
+                            touched.clearingNumber && errors.clearingNumber
+                          )}
+                          fullWidth
+                          helperText={
+                            touched.clearingNumber && errors.clearingNumber
+                          }
+                          label={t("Clearing Number")}
+                          name="clearingNumber"
+                          onBlur={handleBlur}
+                          type="number"
+                          onChange={handleChange}
+                          value={values.clearingNumber}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      <Grid item xs={12}>
+                        <TextField
+                          error={Boolean(
+                            touched.tempPassword && errors.tempPassword
+                          )}
+                          fullWidth
+                          margin="normal"
+                          helperText={
+                            touched.tempPassword && errors.tempPassword
+                          }
+                          label={t("Password")}
+                          name="tempPassword"
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          type="password"
+                          value={values.tempPassword}
+                          variant="outlined"
+                        />
+                      </Grid>
+                      {/* <Grid item xs={12} md={6}>
                         <Autocomplete
                           disablePortal
                           options={roles}
@@ -306,7 +364,7 @@ function PageHeader() {
                             />
                           )}
                         />
-                      </Grid>
+                      </Grid> */}
                     </Grid>
                   </Grid>
                   <Grid item xs={12} lg={5} justifyContent="center">

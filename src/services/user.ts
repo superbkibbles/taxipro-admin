@@ -36,6 +36,26 @@ export const userApi = createApi({
         return [{ type: "Users", id: result?.id || id?.filter }];
       },
     }),
+    getUserById: builder.query<
+      UserWithRelations,
+      { filter: string; id: string } | undefined
+    >({
+      query: (queryArg) => ({
+        url: `/admin/users/${queryArg.id}`,
+        params: { filter: queryArg?.filter },
+      }),
+      providesTags: (result, error, id) => {
+        return [{ type: "Users", id: result?.id || id?.filter }];
+      },
+    }),
+    createUser: builder.mutation({
+      query: (data: any) => ({
+        url: "/admin/users",
+        method: "POST",
+        body: data,
+      }),
+      invalidatesTags: () => [{ type: "Users", id: getUserInfo()?.id }],
+    }),
     updateUser: builder.mutation({
       query: (data: UpdateUserRequestBody) => ({
         url: "/users/update",
@@ -112,6 +132,7 @@ export const userApi = createApi({
 export const {
   useGetUserQuery,
   useGetUsersQuery,
+  useGetUserByIdQuery,
   useUpdateUserMutation,
   useChangeEmailMutation,
   useChangePasswordMutation,
@@ -121,4 +142,5 @@ export const {
   useSendEmailMutation,
   useUploadMutation,
   useGetCarsMutation,
+  useCreateUserMutation,
 } = userApi;

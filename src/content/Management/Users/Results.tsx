@@ -359,7 +359,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
             <Tab key={tab.value} value={tab.value} label={tab.label} />
           ))}
         </TabsWrapper>
-        <ToggleButtonGroup
+        {/* <ToggleButtonGroup
           sx={{
             mt: { xs: 2, sm: 0 },
           }}
@@ -373,7 +373,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
           <ToggleButton disableRipple value="grid_view">
             <GridViewTwoToneIcon />
           </ToggleButton>
-        </ToggleButtonGroup>
+        </ToggleButtonGroup> */}
       </Box>
       {toggleView === "table_view" && (
         <Card>

@@ -1,6 +1,5 @@
-import { FC } from 'react';
-import PropTypes from 'prop-types';
-import type { User } from 'src/models/user';
+import { FC } from "react";
+import PropTypes from "prop-types";
 import {
   Box,
   Typography,
@@ -10,17 +9,18 @@ import {
   CardMedia,
   Button,
   IconButton,
-  styled
-} from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import ArrowBackTwoToneIcon from '@mui/icons-material/ArrowBackTwoTone';
-import ArrowForwardTwoToneIcon from '@mui/icons-material/ArrowForwardTwoTone';
+  styled,
+} from "@mui/material";
+import { useTranslation } from "react-i18next";
+import ArrowBackTwoToneIcon from "@mui/icons-material/ArrowBackTwoTone";
+import ArrowForwardTwoToneIcon from "@mui/icons-material/ArrowForwardTwoTone";
 
-import UploadTwoToneIcon from '@mui/icons-material/UploadTwoTone';
-import MoreHorizTwoToneIcon from '@mui/icons-material/MoreHorizTwoTone';
+import UploadTwoToneIcon from "@mui/icons-material/UploadTwoTone";
+import MoreHorizTwoToneIcon from "@mui/icons-material/MoreHorizTwoTone";
+import { UserWithRelations } from "@/services/cars";
 
-const Input = styled('input')({
-  display: 'none'
+const Input = styled("input")({
+  display: "none",
 });
 
 const AvatarWrapper = styled(Card)(
@@ -28,7 +28,6 @@ const AvatarWrapper = styled(Card)(
     position: relative;
     overflow: visible;
     display: inline-block;
-    margin-top: -${theme.spacing(9)};
     margin-left: ${theme.spacing(2)};
 
     .MuiAvatar-root {
@@ -81,7 +80,7 @@ const CardCoverAction = styled(Box)(
 );
 
 interface ProfileCoverProps {
-  user: User;
+  user: UserWithRelations;
 }
 
 const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
@@ -90,13 +89,13 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
   return (
     <>
       <Box display="flex" mb={3}>
-        <Tooltip arrow placement="top" title={t('Go back')}>
+        <Tooltip arrow placement="top" title={t("Go back")}>
           <IconButton
             href="/management/users"
             color="primary"
             sx={{
               p: 2,
-              mr: 2
+              mr: 2,
             }}
           >
             <ArrowBackTwoToneIcon />
@@ -104,14 +103,14 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
         </Tooltip>
         <Box>
           <Typography variant="h3" component="h3" gutterBottom>
-            {t('Profile for')} {user.name}
+            {t("Profile for")} {user.name}
           </Typography>
           <Typography variant="subtitle2">
-            {t('This is a profile page. Easy to modify, always blazing fast')}
+            {t("This is a profile page. Easy to modify, always blazing fast")}
           </Typography>
         </Box>
       </Box>
-      <CardCover>
+      {/* <CardCover>
         <CardMedia image={user.coverImg} />
         <CardCoverAction>
           <Input accept="image/*" id="change-cover" multiple type="file" />
@@ -121,13 +120,13 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
               variant="contained"
               component="span"
             >
-              {t('Change cover')}
+              {t("Change cover")}
             </Button>
           </label>
         </CardCoverAction>
-      </CardCover>
+      </CardCover> */}
       <AvatarWrapper>
-        <Avatar variant="rounded" alt={user.name} src={user.avatar} />
+        <Avatar variant="rounded" alt={user.name} src={user?.image?.url} />
         <ButtonUploadWrapper>
           <Input
             accept="image/*"
@@ -135,11 +134,11 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
             name="icon-button-file"
             type="file"
           />
-          <label htmlFor="icon-button-file">
+          {/* <label htmlFor="icon-button-file">
             <IconButton component="span" color="primary">
               <UploadTwoToneIcon />
             </IconButton>
-          </label>
+          </label> */}
         </ButtonUploadWrapper>
       </AvatarWrapper>
       <Box py={2} pl={2} mb={3}>
@@ -149,35 +148,35 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
         <Typography variant="subtitle2">{user.description}</Typography>
         <Typography
           sx={{
-            py: 2
+            py: 2,
           }}
           variant="subtitle2"
           color="text.primary"
         >
-          {user.jobtitle} | {user.location} | {user.followers} {t('followers')}
+          {user?.emails[0]} | {user?.bankGiro} | {user?.address1}
         </Typography>
         <Box
-          display={{ xs: 'block', md: 'flex' }}
+          display={{ xs: "block", md: "flex" }}
           alignItems="center"
           justifyContent="space-between"
         >
           <Box>
             <Button size="small" variant="contained">
-              {t('Follow')}
+              {t("Follow")}
             </Button>
             <Button
               size="small"
               sx={{
-                mx: 1
+                mx: 1,
               }}
               variant="outlined"
             >
-              {t('View website')}
+              {t("View website")}
             </Button>
             <IconButton
               color="primary"
               sx={{
-                p: 0.5
+                p: 0.5,
               }}
             >
               <MoreHorizTwoToneIcon />
@@ -185,15 +184,15 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
           </Box>
           <Button
             sx={{
-              mt: { xs: 2, md: 0 }
+              mt: { xs: 2, md: 0 },
             }}
             size="small"
             variant="text"
             endIcon={<ArrowForwardTwoToneIcon />}
           >
-            {t('See all')}
-            {' ' + user.followers + ' '}
-            {t('connections')}
+            {t("See all")}
+            {" " + user.followers + " "}
+            {t("connections")}
           </Button>
         </Box>
       </Box>
@@ -203,7 +202,7 @@ const ProfileCover: FC<ProfileCoverProps> = ({ user }) => {
 
 ProfileCover.propTypes = {
   // @ts-ignore
-  user: PropTypes.object.isRequired
+  user: PropTypes.object.isRequired,
 };
 
 export default ProfileCover;
