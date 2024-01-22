@@ -8,7 +8,7 @@ import {
 import { getAccessToken, refreshToken } from "@/utils/auth";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: BASE_API_URL || "http://localhost:4001",
+  baseUrl: BASE_API_URL || "https://localhost:4001",
   prepareHeaders: (headers) => {
     const token = getAccessToken();
     if (token) headers.set("authorization", `Bearer ${token}`);
