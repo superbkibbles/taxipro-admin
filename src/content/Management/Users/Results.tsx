@@ -128,6 +128,8 @@ const TabsWrapper = styled(Tabs)(
 
 interface ResultsProps {
   users: User[];
+  onSearchChange: (value: string) => void;
+  search: string;
 }
 
 interface Filters {
@@ -209,7 +211,7 @@ const applyPagination = (
   return users.slice(page * limit, page * limit + limit);
 };
 
-const Results: FC<ResultsProps> = ({ users }) => {
+const Results: FC<ResultsProps> = ({ users, onSearchChange, search }) => {
   const [selectedItems, setSelectedUsers] = useState<string[]>([]);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -272,7 +274,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
 
   const handleQueryChange = (event: ChangeEvent<HTMLInputElement>): void => {
     event.persist();
-    setQuery(event.target.value);
+    onSearchChange(event.target.value);
   };
 
   const handleSelectAllUsers = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -392,7 +394,7 @@ const Results: FC<ResultsProps> = ({ users }) => {
                 }}
                 onChange={handleQueryChange}
                 placeholder={t("Search by name, email or username...")}
-                value={query}
+                value={search}
                 size="small"
                 fullWidth
                 margin="normal"

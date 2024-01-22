@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import { Grid } from "@mui/material";
 
@@ -14,13 +14,17 @@ import {
 import { useGetUserQuery, useGetUsersQuery } from "@/services/user";
 import { useGetDriversQuery } from "@/services/drivers";
 import Results from "@/content/Management/Users/Results";
+import { Role } from "@/types";
 
 function ManagementUsers() {
+  const [search, setSearch] = useState("");
   const { data: users, isLoading: isLoadingDrivers } = useGetUsersQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
     // }),
-    filter: undefined,
+    filter: JSON.stringify({
+      where: { role: Role.Company, name: { like: search } },
+    }),
   });
 
   return (
@@ -41,7 +45,7 @@ function ManagementUsers() {
         spacing={3}
       >
         <Grid item xs={12}>
-          <Results users={users} />
+          <Results search={search} onSearchChange={setSearch} users={users} />
         </Grid>
       </Grid>
       <Footer />

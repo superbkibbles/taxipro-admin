@@ -49,7 +49,7 @@ export const userApi = createApi({
       },
     }),
     createUser: builder.mutation({
-      query: (data: any) => ({
+      query: (data: UserWithRelations) => ({
         url: "/admin/users",
         method: "POST",
         body: data,

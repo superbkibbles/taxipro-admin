@@ -117,6 +117,17 @@ function PageHeader() {
     setOpen(false);
   };
 
+  const handleCreateUserError = (e: string) => {
+    enqueueSnackbar(t(e), {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+      TransitionComponent: Zoom,
+    });
+  };
+
   return (
     <>
       <Grid container justifyContent="space-between" alignItems="center">
@@ -201,12 +212,23 @@ function PageHeader() {
                 ..._values,
                 clearingNumber: Number(_values.clearingNumber),
               });
-              setStatus({ success: true });
-              setSubmitting(false);
-              handleCreateUserSuccess();
-              console.log(res);
+              // @ts-ignore
+              if (res.error) {
+                setStatus({ success: false });
+                // @ts-ignore
+                setErrors({ submit: "Error" });
+                handleCreateUserError(
+                  // @ts-ignore
+                  res?.error?.data?.error?.message || "Unknown error"
+                );
+                setSubmitting(false);
+              } else {
+                setStatus({ success: true });
+                setSubmitting(false);
+                handleCreateUserSuccess();
+                console.log(res);
+              }
             } catch (err) {
-              console.error(err);
               setStatus({ success: false });
               // setErrors({ submit: err.message });
               setSubmitting(false);
