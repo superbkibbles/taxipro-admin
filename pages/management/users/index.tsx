@@ -18,12 +18,16 @@ import { Role } from "@/types";
 
 function ManagementUsers() {
   const [search, setSearch] = useState("");
+  const [tabValue, setTabValue] = useState("");
   const { data: users, isLoading: isLoadingDrivers } = useGetUsersQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
     // }),
     filter: JSON.stringify({
-      where: { role: Role.Company, name: { like: search } },
+      where: {
+        role: tabValue === "all" ? undefined : tabValue,
+        name: { like: search },
+      },
     }),
   });
 
@@ -45,7 +49,12 @@ function ManagementUsers() {
         spacing={3}
       >
         <Grid item xs={12}>
-          <Results search={search} onSearchChange={setSearch} users={users} />
+          <Results
+            handleTabChange={(value: string) => setTabValue(value)}
+            search={search}
+            onSearchChange={setSearch}
+            users={users}
+          />
         </Grid>
       </Grid>
       <Footer />

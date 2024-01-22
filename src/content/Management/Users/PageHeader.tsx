@@ -30,6 +30,7 @@ import CloudUploadTwoToneIcon from "@mui/icons-material/CloudUploadTwoTone";
 import { useCreateUserMutation, useGetUserQuery } from "@/services/user";
 import { useSignupUserMutation } from "@/services/auth";
 import { UserWithRelations } from "@/services/cars";
+import { DatePicker } from "@mui/lab";
 
 const Input = styled("input")({
   display: "none",
@@ -72,14 +73,16 @@ const ButtonUploadWrapper = styled(Box)(
 );
 
 const roles = [
-  { label: "Administrator", value: "admin" },
-  { label: "Subscriber", value: "subscriber" },
-  { label: "Customer", value: "customer" },
+  { label: "Taxi Pro S", value: "xi Pro S" },
+  { label: "Taxi Pro M", value: "Taxi Pro M" },
+  { label: "Taxi Pro L", value: "Taxi Pro L" },
+  { label: "Obegränsad", value: "Obegränsad" },
 ];
 
 function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
+  const [dateValue, setDateValue] = useState();
   const { enqueueSnackbar } = useSnackbar();
   const { data: user } = useGetUserQuery(undefined);
   const [createUser, { isLoading }] = useCreateUserMutation();
@@ -374,19 +377,35 @@ function PageHeader() {
                           variant="outlined"
                         />
                       </Grid>
-                      {/* <Grid item xs={12} md={6}>
+                      <Grid item xs={12} md={6}>
                         <Autocomplete
+                          multiple={false}
                           disablePortal
                           options={roles}
                           renderInput={(params) => (
                             <TextField
                               fullWidth
                               {...params}
-                              label={t("User role")}
+                              label={t("Package")}
                             />
                           )}
                         />
-                      </Grid> */}
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <DatePicker
+                          value={dateValue}
+                          onChange={(newValue1) => {
+                            setDateValue(newValue1);
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              fullWidth
+                              placeholder={t("Select date...")}
+                              {...params}
+                            />
+                          )}
+                        />
+                      </Grid>
                     </Grid>
                   </Grid>
                   <Grid item xs={12} lg={5} justifyContent="center">

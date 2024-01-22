@@ -54,7 +54,7 @@ import TableRowsTwoToneIcon from "@mui/icons-material/TableRowsTwoTone";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import { useSnackbar } from "notistack";
 import MoreVertTwoToneIcon from "@mui/icons-material/MoreVertTwoTone";
-import { User } from "@/types";
+import { Role, User } from "@/types";
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -130,6 +130,7 @@ interface ResultsProps {
   users: User[];
   onSearchChange: (value: string) => void;
   search: string;
+  handleTabChange: (value: string) => void;
 }
 
 interface Filters {
@@ -211,7 +212,12 @@ const applyPagination = (
   return users.slice(page * limit, page * limit + limit);
 };
 
-const Results: FC<ResultsProps> = ({ users, onSearchChange, search }) => {
+const Results: FC<ResultsProps> = ({
+  users,
+  onSearchChange,
+  search,
+  handleTabChange,
+}) => {
   const [selectedItems, setSelectedUsers] = useState<string[]>([]);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
@@ -222,17 +228,17 @@ const Results: FC<ResultsProps> = ({ users, onSearchChange, search }) => {
       label: t("All users"),
     },
     {
-      value: "companies",
+      value: Role.Company,
       label: t("Companies"),
     },
     {
-      value: "drivers",
+      value: Role.User,
       label: t("Drivers"),
     },
-    {
-      value: "subscriber",
-      label: t("Subscribers"),
-    },
+    // {
+    //   value: "subscriber",
+    //   label: t("Subscribers"),
+    // },
     // {
     //   value: "all",
     //   label: t("All users"),
@@ -257,12 +263,15 @@ const Results: FC<ResultsProps> = ({ users, onSearchChange, search }) => {
   const [filters, setFilters] = useState<Filters>({
     role: null,
   });
-  const handleTabsChange = (_event: SyntheticEvent, tabsValue: unknown) => {
+  const handleTabsChange = (_event: SyntheticEvent, tabsValue: string) => {
     let value = null;
 
     if (tabsValue !== "all") {
+      handleTabChange("all");
       value = tabsValue;
     }
+
+    handleTabChange(tabsValue);
 
     setFilters((prevFilters) => ({
       ...prevFilters,
