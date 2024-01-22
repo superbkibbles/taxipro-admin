@@ -4,12 +4,12 @@ export const defaultPhoneCode = "+1";
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_BASE_API_URL?.trim() ||
   // "http://localhost:4001" ||
-  "http://13.50.165.77/apiTaxipro";
+  "https://13.50.165.77/apiTaxipro";
 
 export const BASE_APP_URL =
   process.env.NEXT_PUBLIC_BASE_APP_URL?.trim() ||
   // "http://localhost:3000" ||
-  "http://13.50.165.77";
+  "https://13.50.165.77";
 
 export const emailRegex =
   /^(([^\s"(),.:;<>@[\\\]]+(\.[^\s"(),.:;<>@[\\\]]+)*)|(".+"))@((\[(?:\d{1,3}\.){3}\d{1,3}])|(([\dA-Za-z-]+\.)+[A-Za-z]{2,}))$/;
