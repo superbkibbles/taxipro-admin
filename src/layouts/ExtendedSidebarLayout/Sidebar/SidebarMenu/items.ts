@@ -267,10 +267,10 @@ const menuItems: MenuItems[] = [
             name: "List",
             link: "/management/users",
           },
-          {
-            name: "User Profile",
-            link: "/management/users/single/1",
-          },
+          // {
+          //   name: "User Profile",
+          //   link: "/management/users/single/1",
+          // },
         ],
       },
       // {

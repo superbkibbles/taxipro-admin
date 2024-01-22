@@ -532,7 +532,7 @@ const Results: FC<ResultsProps> = ({
               <Box p={2}>
                 <TablePagination
                   component="div"
-                  count={filteredUsers.length}
+                  count={users.length}
                   onPageChange={handlePageChange}
                   onRowsPerPageChange={handleLimitChange}
                   page={page}

@@ -4,10 +4,30 @@ import Head from "next/head";
 
 import ExtendedSidebarLayout from "src/layouts/ExtendedSidebarLayout";
 import { Authenticated } from "src/components/Authenticated";
+import LaunchTwoToneIcon from "@mui/icons-material/LaunchTwoTone";
 
 import Footer from "src/components/Footer";
 
-import { Box, Tabs, Tab, Grid, styled } from "@mui/material";
+import {
+  Box,
+  Tabs,
+  Tab,
+  Grid,
+  styled,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  Checkbox,
+  TableBody,
+  Typography,
+  Avatar,
+  Link,
+  Tooltip,
+  IconButton,
+  TablePagination,
+} from "@mui/material";
 
 import type { User } from "src/models/user";
 import { usersApi } from "src/mocks/users";
@@ -25,8 +45,9 @@ import ActivityTab from "src/content/Management/Users/single/ActivityTab";
 import EditProfileTab from "src/content/Management/Users/single/EditProfileTab";
 import NotificationsTab from "src/content/Management/Users/single/NotificationsTab";
 import SecurityTab from "src/content/Management/Users/single/SecurityTab";
-import { useGetUserByIdQuery } from "@/services/user";
+import { useGetUserByIdQuery, useGetUsersQuery } from "@/services/user";
 import { useRouter } from "next/router";
+import { Role } from "@/types";
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -40,7 +61,23 @@ function ManagementUsersView() {
   const router = useRouter();
   // const [user, setUser] = useState<User | null>(null);
   const { t }: { t: any } = useTranslation();
-  const { data: user, isLoading: isLoadingDrivers } = useGetUserByIdQuery({
+  const { data: users, isLoading: isLoadingDrivers } = useGetUsersQuery({
+    filter: JSON.stringify({
+      where: { role: "User", creatorId: router?.query?.userId as string },
+    }),
+    // filter: JSON.stringify({
+    //   where: {
+    //     role: tabValue === "all" ? undefined : tabValue,
+    //     name: { like: search },
+    //   },
+    // }),
+  });
+
+  const [page, setPage] = useState<number>(0);
+  const [limit, setLimit] = useState<number>(10);
+  const [query, setQuery] = useState<string>("");
+
+  const { data: user, isLoading: isLoadingUser } = useGetUserByIdQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
     // }),
@@ -48,13 +85,21 @@ function ManagementUsersView() {
     filter: undefined,
   });
 
-  const [currentTab, setCurrentTab] = useState<string>("activity");
+  const [currentTab, setCurrentTab] = useState<string>(Role.User);
 
   const tabs = [
-    { value: "activity", label: t("Activity") },
-    { value: "edit_profile", label: t("Edit Profile") },
-    { value: "notifications", label: t("Notifications") },
-    { value: "security", label: t("Passwords/Security") },
+    {
+      value: Role.User,
+      label: t("Drivers"),
+    },
+    {
+      value: "cars",
+      label: t("Cars"),
+    },
+    // {
+    //   value: "User",
+    //   label: t("Drivers"),
+    // },
   ];
 
   const handleTabsChange = (_event: ChangeEvent<{}>, value: string): void => {
@@ -64,6 +109,14 @@ function ManagementUsersView() {
   if (!user) {
     return null;
   }
+
+  const handlePageChange = (_event: any, newPage: number): void => {
+    setPage(newPage);
+  };
+
+  const handleLimitChange = (event: ChangeEvent<HTMLInputElement>): void => {
+    setLimit(parseInt(event.target.value));
+  };
 
   return (
     <>
@@ -83,9 +136,9 @@ function ManagementUsersView() {
             <ProfileCover user={user} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <RecentActivity />
+            <RecentActivity drivers={users?.length} cars={21} />
           </Grid>
-          <Grid item xs={12} md={8}>
+          {/* <Grid item xs={12} md={8}>
             <Feed />
           </Grid>
           <Grid item xs={12} md={4}>
@@ -96,7 +149,7 @@ function ManagementUsersView() {
           </Grid>
           <Grid item xs={12} md={5}>
             <Addresses />
-          </Grid>
+          </Grid> */}
           <Grid item xs={12}>
             <TabsWrapper
               onChange={handleTabsChange}
@@ -112,10 +165,123 @@ function ManagementUsersView() {
             </TabsWrapper>
           </Grid>
           <Grid item xs={12}>
-            {currentTab === "activity" && <ActivityTab />}
+            {/* {currentTab === "activity" && <ActivityTab />}
             {currentTab === "edit_profile" && <EditProfileTab />}
             {currentTab === "notifications" && <NotificationsTab />}
-            {currentTab === "security" && <SecurityTab />}
+            {currentTab === "security" && <SecurityTab />} */}
+            <TableContainer>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    {/* <TableCell padding="checkbox">
+                        <Checkbox
+                          checked={selectedAllUsers}
+                          indeterminate={selectedSomeUsers}
+                          onChange={handleSelectAllUsers}
+                        />
+                      </TableCell> */}
+                    <TableCell>{t("Username")}</TableCell>
+                    <TableCell>{t("Name")}</TableCell>
+                    <TableCell>{t("Email")}</TableCell>
+                    <TableCell align="center">{t("Posts")}</TableCell>
+                    <TableCell>{t("Location")}</TableCell>
+                    {/* <TableCell>{t("Role")}</TableCell> */}
+                    <TableCell align="center">{t("Actions")}</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {users?.map((user) => {
+                    // const isUserSelected = selectedItems.includes(user.id);
+                    return (
+                      <TableRow
+                        hover
+                        key={user.id}
+                        // selected={isUserSelected}
+                      >
+                        {/* <TableCell padding="checkbox">
+                          <Checkbox
+                            checked={isUserSelected}
+                            onChange={(event) =>
+                              handleSelectOneUser(event, user.id)
+                            }
+                            value={isUserSelected}
+                          />
+                        </TableCell> */}
+                        <TableCell>
+                          <Typography variant="h5">{user.name}</Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Box display="flex" alignItems="center">
+                            <Avatar
+                              sx={{
+                                mr: 1,
+                              }}
+                              src={user?.image?.url}
+                            />
+                            <Box>
+                              <Link
+                                variant="h5"
+                                href="/management/users/single/1"
+                              >
+                                {user.name}
+                              </Link>
+                              <Typography noWrap variant="subtitle2">
+                                {/* {user.jobtitle} */}
+                                title
+                              </Typography>
+                            </Box>
+                          </Box>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>{user.email}</Typography>
+                        </TableCell>
+                        <TableCell align="center">
+                          <Typography fontWeight="bold">
+                            {/* {user.posts} */}
+                            posts
+                          </Typography>
+                        </TableCell>
+                        <TableCell>
+                          <Typography>{user.address1}</Typography>
+                        </TableCell>
+                        {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
+                        <TableCell align="center">
+                          <Typography noWrap>
+                            <Tooltip title={t("View")} arrow>
+                              <IconButton
+                                href={"/management/users/single/" + user.id}
+                                color="primary"
+                              >
+                                <LaunchTwoToneIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip>
+                            {/* <Tooltip title={t("Delete")} arrow>
+                              <IconButton
+                                onClick={handleConfirmDelete}
+                                color="primary"
+                              >
+                                <DeleteTwoToneIcon fontSize="small" />
+                              </IconButton>
+                            </Tooltip> */}
+                          </Typography>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            {/* <Box p={2}>
+              <TablePagination
+                component="div"
+                count={users?.length}
+                onPageChange={handlePageChange}
+                onRowsPerPageChange={handleLimitChange}
+                page={page}
+                rowsPerPage={limit}
+                rowsPerPageOptions={[5, 10, 15]}
+              />
+            </Box> */}
           </Grid>
         </Grid>
       </Box>

@@ -11,6 +11,8 @@ import {
 import { useTranslation } from "react-i18next";
 import ShoppingBagTwoToneIcon from "@mui/icons-material/ShoppingBagTwoTone";
 import FavoriteTwoToneIcon from "@mui/icons-material/FavoriteTwoTone";
+import PeopleIcon from "@mui/icons-material/People";
+import CarIcon from "@mui/icons-material/CarCrash";
 import StarTwoToneIcon from "@mui/icons-material/StarTwoTone";
 
 const AvatarPrimary = styled(Avatar)(
@@ -22,7 +24,7 @@ const AvatarPrimary = styled(Avatar)(
 `
 );
 
-function RecentActivity() {
+function RecentActivity({ drivers, cars }) {
   const { t }: { t: any } = useTranslation();
   const theme = useTheme();
 
@@ -32,7 +34,7 @@ function RecentActivity() {
       <Divider />
       <Box px={2} py={4} display="flex" alignItems="flex-start">
         <AvatarPrimary>
-          <ShoppingBagTwoToneIcon />
+          <PeopleIcon />
         </AvatarPrimary>
         <Box pl={2} flex={1}>
           <Typography variant="h3">{t("Drivers")}</Typography>
@@ -48,7 +50,7 @@ function RecentActivity() {
               >
                 {t("Total")}
               </Typography>
-              <Typography variant="h2">485</Typography>
+              <Typography variant="h2">{drivers}</Typography>
             </Box>
             {/* <Box>
               <Typography
@@ -68,7 +70,7 @@ function RecentActivity() {
       <Divider />
       <Box px={2} py={4} display="flex" alignItems="flex-start">
         <AvatarPrimary>
-          <FavoriteTwoToneIcon />
+          <CarIcon />
         </AvatarPrimary>
         <Box pl={2} flex={1}>
           <Typography variant="h3">{t("Cars")}</Typography>
@@ -84,7 +86,7 @@ function RecentActivity() {
               >
                 {t("Total")}
               </Typography>
-              <Typography variant="h2">64</Typography>
+              <Typography variant="h2">{cars}</Typography>
             </Box>
             {/* <Box>
               <Typography

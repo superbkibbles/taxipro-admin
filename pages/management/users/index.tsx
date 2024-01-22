@@ -18,7 +18,7 @@ import { Role } from "@/types";
 
 function ManagementUsers() {
   const [search, setSearch] = useState("");
-  const [tabValue, setTabValue] = useState("");
+  const [tabValue, setTabValue] = useState("all");
   const { data: users, isLoading: isLoadingDrivers } = useGetUsersQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
