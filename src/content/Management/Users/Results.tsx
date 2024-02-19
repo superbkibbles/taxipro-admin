@@ -312,7 +312,7 @@ const Results: FC<ResultsProps> = ({
   };
 
   const filteredUsers = applyFilters(users, query, filters);
-  const paginatedUsers = applyPagination(users, page, limit);
+  const paginatedUsers = applyPagination(filteredUsers, page, limit);
   const selectedBulkActions = selectedItems.length > 0;
   const selectedSomeUsers =
     selectedItems.length > 0 && selectedItems.length < users.length;
@@ -336,6 +336,8 @@ const Results: FC<ResultsProps> = ({
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
+
+  console.log(paginatedUsers);
 
   const handleDeleteCompleted = () => {
     setOpenConfirmDelete(false);
@@ -532,7 +534,7 @@ const Results: FC<ResultsProps> = ({
               <Box p={2}>
                 <TablePagination
                   component="div"
-                  count={users.length}
+                  count={filteredUsers.length}
                   onPageChange={handlePageChange}
                   onRowsPerPageChange={handleLimitChange}
                   page={page}

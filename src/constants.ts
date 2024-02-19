@@ -4,7 +4,7 @@ export const defaultPhoneCode = "+1";
 export const BASE_API_URL =
   process.env.NEXT_PUBLIC_BASE_API_URL?.trim() ||
   // "http://localhost:4001" ||
-  "https://13.50.165.77/apiTaxipro";
+  "https://app.taxipro.se/apiTaxipro";
 
 export const BASE_APP_URL =
   process.env.NEXT_PUBLIC_BASE_APP_URL?.trim() ||
