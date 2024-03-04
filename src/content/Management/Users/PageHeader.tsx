@@ -72,17 +72,18 @@ const ButtonUploadWrapper = styled(Box)(
 `
 );
 
-const roles = [
-  { label: "Taxi Pro S", value: "xi Pro S" },
-  { label: "Taxi Pro M", value: "Taxi Pro M" },
-  { label: "Taxi Pro L", value: "Taxi Pro L" },
-  { label: "Obegränsad", value: "Obegränsad" },
+const Package = [
+  { label: "Trial", value: "Trial" },
+  { label: "Taxi Pro S", value: "Small" },
+  { label: "Taxi Pro M", value: "Medium" },
+  { label: "Taxi Pro L", value: "Large" },
+  { label: "Obegränsad", value: "XL" },
 ];
 
 function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [dateValue, setDateValue] = useState();
+  const [dateValue, setDateValue] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
   const { data: user } = useGetUserQuery(undefined);
   const [createUser, { isLoading }] = useCreateUserMutation();
@@ -217,6 +218,7 @@ function PageHeader() {
               });
               // @ts-ignore
               if (res.error) {
+                console.log(res);
                 setStatus({ success: false });
                 // @ts-ignore
                 setErrors({ submit: "Error" });
@@ -256,6 +258,7 @@ function PageHeader() {
             handleChange,
             handleSubmit,
             isSubmitting,
+            setFieldValue,
             touched,
             values,
           }) => (
@@ -381,9 +384,14 @@ function PageHeader() {
                         <Autocomplete
                           multiple={false}
                           disablePortal
-                          options={roles}
+                          options={Package}
+                          onChange={(
+                            _,
+                            option: { label: string; value: string }
+                          ) => setFieldValue("package", option)}
                           renderInput={(params) => (
                             <TextField
+                              name="package"
                               fullWidth
                               {...params}
                               label={t("Package")}
@@ -393,15 +401,16 @@ function PageHeader() {
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <DatePicker
-                          value={dateValue}
-                          onChange={(newValue1) => {
-                            setDateValue(newValue1);
+                          value={values.packageExpiry}
+                          onChange={(val: Date) => {
+                            setFieldValue("packageExpiry", val);
                           }}
                           renderInput={(params) => (
                             <TextField
                               fullWidth
                               placeholder={t("Select date...")}
                               {...params}
+                              name="sasas"
                             />
                           )}
                         />

@@ -55,6 +55,8 @@ import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import { useSnackbar } from "notistack";
 import MoreVertTwoToneIcon from "@mui/icons-material/MoreVertTwoTone";
 import { Role, User } from "@/types";
+import dayjs from "dayjs";
+import { Block } from "@mui/icons-material";
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -437,17 +439,20 @@ const Results: FC<ResultsProps> = ({
                 <Table>
                   <TableHead>
                     <TableRow>
-                      <TableCell padding="checkbox">
+                      {/* <TableCell padding="checkbox">
                         <Checkbox
                           checked={selectedAllUsers}
                           indeterminate={selectedSomeUsers}
                           onChange={handleSelectAllUsers}
                         />
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell>{t("Username")}</TableCell>
                       <TableCell>{t("Name")}</TableCell>
                       <TableCell>{t("Email")}</TableCell>
-                      <TableCell align="center">{t("Posts")}</TableCell>
+                      <TableCell align="center">{t("Package")}</TableCell>
+                      <TableCell align="center">
+                        {t("Package expires")}
+                      </TableCell>
                       <TableCell>{t("Location")}</TableCell>
                       {/* <TableCell>{t("Role")}</TableCell> */}
                       <TableCell align="center">{t("Actions")}</TableCell>
@@ -458,7 +463,7 @@ const Results: FC<ResultsProps> = ({
                       const isUserSelected = selectedItems.includes(user.id);
                       return (
                         <TableRow hover key={user.id} selected={isUserSelected}>
-                          <TableCell padding="checkbox">
+                          {/* <TableCell padding="checkbox">
                             <Checkbox
                               checked={isUserSelected}
                               onChange={(event) =>
@@ -466,7 +471,7 @@ const Results: FC<ResultsProps> = ({
                               }
                               value={isUserSelected}
                             />
-                          </TableCell>
+                          </TableCell> */}
                           <TableCell>
                             <Typography variant="h5">{user.name}</Typography>
                           </TableCell>
@@ -497,8 +502,16 @@ const Results: FC<ResultsProps> = ({
                           </TableCell>
                           <TableCell align="center">
                             <Typography fontWeight="bold">
-                              {/* {user.posts} */}
-                              posts
+                              {user?.package?.label ?? "No package selected"}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="center">
+                            <Typography fontWeight="bold">
+                              {user?.packageExpiry
+                                ? dayjs(user?.packageExpiry).format(
+                                    "DD/MM/YYYY"
+                                  )
+                                : "N/A"}
                             </Typography>
                           </TableCell>
                           <TableCell>
@@ -515,12 +528,12 @@ const Results: FC<ResultsProps> = ({
                                   <LaunchTwoToneIcon fontSize="small" />
                                 </IconButton>
                               </Tooltip>
-                              <Tooltip title={t("Delete")} arrow>
+                              <Tooltip title={t("Block")} arrow>
                                 <IconButton
                                   onClick={handleConfirmDelete}
                                   color="primary"
                                 >
-                                  <DeleteTwoToneIcon fontSize="small" />
+                                  <Block fontSize="small" />
                                 </IconButton>
                               </Tooltip>
                             </Typography>
@@ -806,8 +819,7 @@ const Results: FC<ResultsProps> = ({
             }}
             variant="h3"
           >
-            {t("Are you sure you want to permanently delete this user account")}
-            ?
+            {t("Are you sure you want to block this user account")}?
           </Typography>
 
           <Box>

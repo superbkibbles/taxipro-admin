@@ -1568,6 +1568,8 @@ export interface User {
   plusGiro?: number;
   address1?: string;
   postNo?: string;
+  package: string;
+  packageExpiry: string;
   isMonthlySalary?: boolean;
   fixedSalary?: number;
   isCommission?: boolean;

@@ -908,6 +908,8 @@ export type UserWithRelations = {
   personalNumber?: string;
   clearingNumber?: number;
   accountNumber?: string;
+  package: string;
+  packageExpiry: string;
   bankGiro?: number;
   plusGiro?: number;
   address1?: string;
