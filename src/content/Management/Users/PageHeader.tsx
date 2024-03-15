@@ -72,7 +72,7 @@ const ButtonUploadWrapper = styled(Box)(
 `
 );
 
-const Package = [
+export const Package = [
   { label: "Trial", value: "Trial" },
   { label: "Taxi Pro S", value: "Small" },
   { label: "Taxi Pro M", value: "Medium" },
@@ -83,7 +83,6 @@ const Package = [
 function PageHeader() {
   const { t }: { t: any } = useTranslation();
   const [open, setOpen] = useState(false);
-  const [dateValue, setDateValue] = useState<string>("");
   const { enqueueSnackbar } = useSnackbar();
   const { data: user } = useGetUserQuery(undefined);
   const [createUser, { isLoading }] = useCreateUserMutation();
@@ -211,6 +210,8 @@ function PageHeader() {
             _values: UserWithRelations,
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
+            _values.subscription.status =
+              _values.subscription.plan === "Trial" ? "Trial" : "Subscribed";
             try {
               const res = await createUser({
                 ..._values,
@@ -218,7 +219,7 @@ function PageHeader() {
               });
               // @ts-ignore
               if (res.error) {
-                console.log(res);
+                console.log(err);
                 setStatus({ success: false });
                 // @ts-ignore
                 setErrors({ submit: "Error" });
@@ -388,7 +389,7 @@ function PageHeader() {
                           onChange={(
                             _,
                             option: { label: string; value: string }
-                          ) => setFieldValue("package", option)}
+                          ) => setFieldValue("subscription.plan", option.value)}
                           renderInput={(params) => (
                             <TextField
                               name="package"
@@ -401,9 +402,9 @@ function PageHeader() {
                       </Grid>
                       <Grid item xs={12} md={6}>
                         <DatePicker
-                          value={values.packageExpiry}
+                          value={values?.subscription?.expiredAt}
                           onChange={(val: Date) => {
-                            setFieldValue("packageExpiry", val);
+                            setFieldValue("subscription.expiredAt", val);
                           }}
                           renderInput={(params) => (
                             <TextField
@@ -413,6 +414,26 @@ function PageHeader() {
                               name="sasas"
                             />
                           )}
+                        />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <TextField
+                          error={Boolean(
+                            touched.subscription?.amount &&
+                              errors.subscription?.amount
+                          )}
+                          fullWidth
+                          helperText={
+                            touched.subscription?.amount &&
+                            errors.subscription?.amount
+                          }
+                          label={t("Subscription amount")}
+                          name="subscription.amount"
+                          onBlur={handleBlur}
+                          type="number"
+                          onChange={handleChange}
+                          value={values.subscription?.amount}
+                          variant="outlined"
                         />
                       </Grid>
                     </Grid>

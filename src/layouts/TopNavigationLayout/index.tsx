@@ -1,4 +1,4 @@
-import { FC, ReactNode, useContext } from 'react';
+import { FC, ReactNode, useContext } from "react";
 import {
   Box,
   Drawer,
@@ -6,17 +6,17 @@ import {
   Card,
   Container,
   styled,
-  useTheme
-} from '@mui/material';
-import PropTypes from 'prop-types';
+  useTheme,
+} from "@mui/material";
+import PropTypes from "prop-types";
 
-import TopBar from './TopBar';
-import Scrollbar from 'src/components/Scrollbar';
-import { SidebarContext } from 'src/contexts/SidebarContext';
-import SidebarMenu from 'src/layouts/AccentHeaderLayout/Sidebar/SidebarMenu';
-import SidebarTopSection from 'src/layouts/AccentHeaderLayout/Sidebar/SidebarTopSection';
-import ThemeSettings from 'src/components/ThemeSettings';
-import Logo from 'src/components/LogoSign';
+import TopBar from "./TopBar";
+import Scrollbar from "src/components/Scrollbar";
+import { SidebarContext } from "src/contexts/SidebarContext";
+import SidebarMenu from "src/layouts/AccentHeaderLayout/Sidebar/SidebarMenu";
+import SidebarTopSection from "src/layouts/AccentHeaderLayout/Sidebar/SidebarTopSection";
+import ThemeSettings from "src/components/ThemeSettings";
+import Logo from "src/components/LogoSign";
 
 interface TopNavigationLayoutProps {
   children?: ReactNode;
@@ -101,9 +101,9 @@ const TopNavigationLayout: FC<TopNavigationLayoutProps> = ({ children }) => {
           </Box>
           <Drawer
             sx={{
-              display: { lg: 'none', xs: 'inline-block' }
+              display: { lg: "none", xs: "inline-block" },
             }}
-            anchor={theme.direction === 'rtl' ? 'right' : 'left'}
+            anchor={theme.direction === "rtl" ? "right" : "left"}
             open={sidebarToggle}
             onClose={closeSidebar}
             variant="temporary"
@@ -117,7 +117,7 @@ const TopNavigationLayout: FC<TopNavigationLayoutProps> = ({ children }) => {
                       width: 52,
                       ml: 1,
                       mt: 1,
-                      mb: 3
+                      mb: 3,
                     }}
                   >
                     <Logo />
@@ -136,7 +136,7 @@ const TopNavigationLayout: FC<TopNavigationLayoutProps> = ({ children }) => {
 };
 
 TopNavigationLayout.propTypes = {
-  children: PropTypes.node
+  children: PropTypes.node,
 };
 
 export default TopNavigationLayout;

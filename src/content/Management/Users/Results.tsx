@@ -38,6 +38,8 @@ import {
   Dialog,
   Zoom,
   styled,
+  Autocomplete,
+  CircularProgress,
 } from "@mui/material";
 import Link from "src/components/Link";
 
@@ -57,6 +59,10 @@ import MoreVertTwoToneIcon from "@mui/icons-material/MoreVertTwoTone";
 import { Role, User } from "@/types";
 import dayjs from "dayjs";
 import { Block } from "@mui/icons-material";
+import { Package } from "./PageHeader";
+import { DatePicker } from "@mui/lab";
+import { Formik } from "formik";
+import { useUpdateUserMutation } from "@/services/user";
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -110,6 +116,17 @@ const ButtonError = styled(Button)(
 
      &:hover {
         background: ${theme.colors.error.dark};
+     }
+    `
+);
+
+const ButtonSuccess = styled(Button)(
+  ({ theme }) => `
+     background: ${theme.colors.success.main};
+     color: ${theme.palette.success.contrastText};
+
+     &:hover {
+        background: ${theme.colors.success.dark};
      }
     `
 );
@@ -221,8 +238,21 @@ const Results: FC<ResultsProps> = ({
   handleTabChange,
 }) => {
   const [selectedItems, setSelectedUsers] = useState<string[]>([]);
+  const [selectedUpdatePackage, setSelectedUpdatePackage] = useState(null);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
+  const [updateUser, { isLoading }] = useUpdateUserMutation();
+
+  const handleUpdateUserError = (e: string) => {
+    enqueueSnackbar(t(e), {
+      variant: "error",
+      anchorOrigin: {
+        vertical: "top",
+        horizontal: "right",
+      },
+      TransitionComponent: Zoom,
+    });
+  };
 
   const tabs = [
     {
@@ -338,8 +368,6 @@ const Results: FC<ResultsProps> = ({
   const closeConfirmDelete = () => {
     setOpenConfirmDelete(false);
   };
-
-  console.log(paginatedUsers);
 
   const handleDeleteCompleted = () => {
     setOpenConfirmDelete(false);
@@ -502,13 +530,14 @@ const Results: FC<ResultsProps> = ({
                           </TableCell>
                           <TableCell align="center">
                             <Typography fontWeight="bold">
-                              {user?.package?.label ?? "No package selected"}
+                              {user?.subscription?.plan ?? "No package"}
+                              {/* {user?.package?.label ?? "No package selected"} */}
                             </Typography>
                           </TableCell>
                           <TableCell align="center">
                             <Typography fontWeight="bold">
-                              {user?.packageExpiry
-                                ? dayjs(user?.packageExpiry).format(
+                              {user?.subscription?.expiredAt
+                                ? dayjs(user?.subscription?.expiredAt).format(
                                     "DD/MM/YYYY"
                                   )
                                 : "N/A"}
@@ -520,6 +549,11 @@ const Results: FC<ResultsProps> = ({
                           {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
                           <TableCell align="center">
                             <Typography noWrap>
+                              <Button
+                                onClick={() => setSelectedUpdatePackage(user)}
+                              >
+                                Update package
+                              </Button>
                               <Tooltip title={t("View")} arrow>
                                 <IconButton
                                   href={"/management/users/single/" + user.id}
@@ -842,10 +876,154 @@ const Results: FC<ResultsProps> = ({
               }}
               variant="contained"
             >
-              {t("Delete")}
+              {t("Block")}
             </ButtonError>
           </Box>
         </Box>
+      </DialogWrapper>
+
+      <DialogWrapper
+        open={selectedUpdatePackage}
+        fullWidth
+        TransitionComponent={Transition}
+        // keepMounted
+        onClose={() => setSelectedUpdatePackage(null)}
+      >
+        <Formik
+          initialValues={selectedUpdatePackage}
+          enableReinitialize
+          // validationSchema={Yup.object().shape({
+          //   name: Yup.string()
+          //     .max(255)
+          //     .required(t("The user name field is required")),
+          //   firstName: Yup.string()
+          //     .max(255)
+          //     .required(t("The first name field is required")),
+          //   lastName: Yup.string()
+          //     .max(255)
+          //     .required(t("The last name field is required")),
+          //   email: Yup.string()
+          //     .email(t("The email provided should be a valid email address"))
+          //     .max(255)
+          //     .required(t("The email field is required")),
+          //   tempPassword: Yup.string()
+          //     .max(255)
+          //     .required(t("The password field is required")),
+          // })}
+          onSubmit={async (
+            values: User,
+            { resetForm, setErrors, setStatus, setSubmitting }
+          ) => {
+            console.log(values);
+            const res = await updateUser({
+              ...selectedUpdatePackage,
+              package: values.package,
+              packageExpiry: values.packageExpiry,
+            });
+            console.log(res);
+            if (res?.error) {
+              handleUpdateUserError(res?.error?.data?.error?.message);
+            } else {
+              enqueueSnackbar(t("Package is updated"), {
+                variant: "success",
+                anchorOrigin: {
+                  vertical: "top",
+                  horizontal: "right",
+                },
+                TransitionComponent: Zoom,
+              });
+              setSelectedUpdatePackage(null);
+            }
+          }}
+        >
+          {({
+            errors,
+            handleBlur,
+            handleChange,
+            handleSubmit,
+            isSubmitting,
+            setFieldValue,
+            touched,
+            values,
+          }) => (
+            <form onSubmit={handleSubmit}>
+              <Box
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                flexDirection="column"
+                p={5}
+              >
+                <Grid container spacing={3}>
+                  <Grid item xs={12} md={12}>
+                    <Autocomplete
+                      multiple={false}
+                      disablePortal
+                      options={Package}
+                      value={values?.package}
+                      onChange={(_, option: { label: string; value: string }) =>
+                        setFieldValue("package", option)
+                      }
+                      renderInput={(params) => (
+                        <TextField
+                          name="package"
+                          fullWidth
+                          {...params}
+                          label={t("Package")}
+                        />
+                      )}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={12}>
+                    <DatePicker
+                      value={values?.packageExpiry}
+                      onChange={(val: Date) => {
+                        setFieldValue("packageExpiry", val);
+                      }}
+                      renderInput={(params) => (
+                        <TextField
+                          fullWidth
+                          placeholder={t("Select date...")}
+                          {...params}
+                          name="sasas"
+                        />
+                      )}
+                    />
+                  </Grid>
+                </Grid>
+
+                <Box mt={3}>
+                  <Button
+                    variant="text"
+                    size="large"
+                    sx={{
+                      mx: 1,
+                    }}
+                    onClick={closeConfirmDelete}
+                  >
+                    {t("Cancel")}
+                  </Button>
+                  <ButtonSuccess
+                    startIcon={
+                      isLoading ? <CircularProgress size="1rem" /> : null
+                    }
+                    disabled={Boolean(isLoading)}
+                    size="large"
+                    sx={{
+                      mx: 1,
+                      px: 3,
+                    }}
+                    variant="contained"
+                    type="submit"
+                  >
+                    {t("Update")}
+                  </ButtonSuccess>
+                </Box>
+              </Box>
+            </form>
+          )}
+        </Formik>
       </DialogWrapper>
     </>
   );

@@ -414,7 +414,7 @@ export type Report = {
   vinst?: number;
   vinstPercentage?: number;
   servise?: number;
-  type: string;
+  type?: string;
   reportDate?: string;
   deleted?: boolean;
   createdAt?: string;
@@ -540,9 +540,9 @@ export type ResetPasswordInfoWithRelations = {
 export type SubscriptionWithRelations = {
   id?: string;
   amount: number;
-  status?: "Subscribed" | "UnSubscribed";
+  status?: "Trial" | "Subscribed" | "UnSubscribed";
   expiredAt: string;
-  plan: "Monthly" | "LifeTime";
+  plan: "Trial" | "Small" | "Medium" | "Large" | "XL";
   sessionId?: string;
   isActive?: boolean;
   createdAt?: string;
@@ -652,8 +652,8 @@ export type CarWithRelations = {
   lastServiceDate?: string | null;
   lastInspectionDate?: string | null;
   reminderDishesAfterKm?: number;
-  reminderSealedBeforeNoDays?: number;
-  reminderInspectionBeforeNoDays?: number;
+  reminderSealedBeforeNoDays?: string | null;
+  reminderInspectionBeforeNoDays?: string | null;
   reminderInspectionDate?: string | null;
   reminderSealedDate?: string | null;
   type?: string;
@@ -752,17 +752,30 @@ export type ToDriver = {
   name?: string;
   email?: string;
 };
+export type Reply = {
+  id?: string;
+  user?: object;
+  content?: string;
+  type?: string;
+  imageUrl?: string;
+  voiceUrl?: string;
+};
 export type SmsWithRelations = {
   id?: string;
-  content: string;
+  content?: string;
+  type: string;
+  imageUrl?: string;
+  voiceUrl?: string;
   from: string;
   to?: string;
+  user?: object;
+  userId?: string;
   isSentByDriver?: boolean;
   toDrivers?: ToDriver[];
+  reply?: Reply;
   createdAt?: string;
   updatedAt?: string;
-  userId?: string;
-  user?: UserWithRelations;
+  User?: UserWithRelations;
 };
 export type CertificatesWithRelations = {
   id?: string;
@@ -868,6 +881,8 @@ export type UserWithRelations = {
   fixedSalaryVacationAmount?: number;
   description?: string;
   requestToJoin?: boolean;
+  subscriptionId?: string;
+  notificationToken?: string;
   availableForWork?: {
     hours?: number;
     jobType?: "FullTime" | "PartTime";
@@ -888,6 +903,26 @@ export type UserWithRelations = {
   };
   tags?: Tag[];
   isActive?: boolean;
+  subscription?: {
+    id?: string;
+    amount: number;
+    status?: "Trial" | "Subscribed" | "UnSubscribed";
+    expiredAt: string;
+    plan: "Trial" | "Small" | "Medium" | "Large" | "XL";
+    sessionId?: string;
+    isActive?: boolean;
+    createdAt?: string;
+    updatedAt?: string;
+    deleted?: boolean;
+    userId?: string;
+    subscribedTo?: string;
+    [key: string]: any;
+  };
+  carsCount?: number;
+  driversCount?: number;
+  sellCarsCount?: number;
+  jobsCount?: number;
+  canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;
   tagId?: string;
@@ -967,7 +1002,7 @@ export type ReportWithRelations = {
   vinst?: number;
   vinstPercentage?: number;
   servise?: number;
-  type: string;
+  type?: string;
   reportDate?: string;
   deleted?: boolean;
   createdAt?: string;
@@ -1037,7 +1072,7 @@ export type NewReport = {
   vinst?: number;
   vinstPercentage?: number;
   servise?: number;
-  type: string;
+  type?: string;
   reportDate?: string;
   deleted?: boolean;
   createdAt?: string;
