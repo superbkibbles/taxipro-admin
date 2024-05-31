@@ -161,7 +161,6 @@ export const AuthProvider: FC<AuthProviderProps> = (props) => {
       if (res?.error) {
         reject(res?.error?.data?.error);
       } else {
-        console.log(res.data);
         setCredentials(res.data);
         dispatch({
           type: "LOGIN",

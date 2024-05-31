@@ -20,7 +20,7 @@ export const Guest: FC<GuestProps> = (props) => {
     }
 
     if (auth.isAuthenticated) {
-      router.push("/dashboards/reports");
+      router.push("/management/users");
     } else {
       setVerified(true);
     }
