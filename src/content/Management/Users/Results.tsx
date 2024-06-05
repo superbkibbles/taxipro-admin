@@ -359,20 +359,40 @@ const Results: FC<ResultsProps> = ({
     setToggleView(newValue);
   };
 
-  const [openConfirmDelete, setOpenConfirmDelete] = useState(false);
+  const [openConfirmDelete, setOpenConfirmDelete] = useState<User | null>(null);
 
-  const handleConfirmDelete = () => {
-    setOpenConfirmDelete(true);
+  const handleConfirmDelete = (user: User) => {
+    setOpenConfirmDelete(user);
   };
 
   const closeConfirmDelete = () => {
-    setOpenConfirmDelete(false);
+    setOpenConfirmDelete(null);
   };
 
-  const handleDeleteCompleted = () => {
-    setOpenConfirmDelete(false);
+  const handleDeleteCompleted = async () => {
+    // if (openConfirmDelete?.role === Role.Company) {
+    // } else if (openConfirmDelete?.role === Role.User) {
+    // }
+    const res = await updateUser({
+      ...openConfirmDelete,
+      isActive: true,
+      deleted: true,
+      blocked: true,
+    });
+    if (res?.error) {
+      enqueueSnackbar(t("Error happened when blocking the user"), {
+        variant: "error",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+        TransitionComponent: Zoom,
+      });
+    }
+    console.log(res);
+    // setOpenConfirmDelete(null);
 
-    enqueueSnackbar(t("The user account has been removed"), {
+    enqueueSnackbar(t("The user account has been blocked"), {
       variant: "success",
       anchorOrigin: {
         vertical: "top",
@@ -490,8 +510,46 @@ const Results: FC<ResultsProps> = ({
                     {paginatedUsers.map((user) => {
                       const isUserSelected = selectedItems.includes(user.id);
                       return (
-                        <TableRow hover key={user.id} selected={isUserSelected}>
-                          {/* <TableCell padding="checkbox">
+                        <>
+                          {/* {user.blocked && (
+                            <Box
+                              position={"absolute"}
+                              width={"100%"}
+                              height={"100%"}
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                              zIndex={100}
+                            >
+                              <ButtonSuccess>unblock user</ButtonSuccess>
+                            </Box>
+                          )} */}
+                          <TableRow
+                            style={{
+                              // position: "relative",
+                              background: user.blocked
+                                ? "rgba(255, 0, 0, 0.4)"
+                                : "transparent",
+                              filter: user.blocked ? "blur(1px)" : "",
+                            }}
+                            hover
+                            key={user.id}
+                            selected={isUserSelected}
+                          >
+                            {/* {user.blocked && (
+                            <Box
+                              position={"absolute"}
+                              width={"100%"}
+                              height={"100%"}
+                              display={"flex"}
+                              alignItems={"center"}
+                              justifyContent={"center"}
+                              zIndex={100}
+                            >
+                              <ButtonSuccess>unblock user</ButtonSuccess>
+                            </Box>
+                          )} */}
+                            {/* <TableCell padding="checkbox">
                             <Checkbox
                               checked={isUserSelected}
                               onChange={(event) =>
@@ -500,79 +558,80 @@ const Results: FC<ResultsProps> = ({
                               value={isUserSelected}
                             />
                           </TableCell> */}
-                          <TableCell>
-                            <Typography variant="h5">{user.name}</Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Box display="flex" alignItems="center">
-                              <Avatar
-                                sx={{
-                                  mr: 1,
-                                }}
-                                src={user?.image?.url}
-                              />
-                              <Box>
-                                <Link
-                                  variant="h5"
-                                  href="/management/users/single/1"
-                                >
-                                  {user.name}
-                                </Link>
-                                <Typography noWrap variant="subtitle2">
-                                  {/* {user.jobtitle} */}
-                                  title
-                                </Typography>
+                            <TableCell>
+                              <Typography variant="h5">{user.name}</Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Box display="flex" alignItems="center">
+                                <Avatar
+                                  sx={{
+                                    mr: 1,
+                                  }}
+                                  src={user?.image?.url}
+                                />
+                                <Box>
+                                  <Link
+                                    variant="h5"
+                                    href="/management/users/single/1"
+                                  >
+                                    {user.name}
+                                  </Link>
+                                  <Typography noWrap variant="subtitle2">
+                                    {/* {user.jobtitle} */}
+                                    title
+                                  </Typography>
+                                </Box>
                               </Box>
-                            </Box>
-                          </TableCell>
-                          <TableCell>
-                            <Typography>{user.email}</Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Typography fontWeight="bold">
-                              {user?.subscription?.plan ?? "No package"}
-                              {/* {user?.package?.label ?? "No package selected"} */}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Typography fontWeight="bold">
-                              {user?.subscription?.expiredAt
-                                ? dayjs(user?.subscription?.expiredAt).format(
-                                    "DD/MM/YYYY"
-                                  )
-                                : "N/A"}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography>{user.address1}</Typography>
-                          </TableCell>
-                          {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
-                          <TableCell align="center">
-                            <Typography noWrap>
-                              <Button
-                                onClick={() => setSelectedUpdatePackage(user)}
-                              >
-                                Update package
-                              </Button>
-                              <Tooltip title={t("View")} arrow>
-                                <IconButton
-                                  href={"/management/users/single/" + user.id}
-                                  color="primary"
+                            </TableCell>
+                            <TableCell>
+                              <Typography>{user.email}</Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography fontWeight="bold">
+                                {user?.subscription?.plan ?? "No package"}
+                                {/* {user?.package?.label ?? "No package selected"} */}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="center">
+                              <Typography fontWeight="bold">
+                                {user?.subscription?.expiredAt
+                                  ? dayjs(user?.subscription?.expiredAt).format(
+                                      "DD/MM/YYYY"
+                                    )
+                                  : "N/A"}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography>{user.address1}</Typography>
+                            </TableCell>
+                            {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
+                            <TableCell align="center">
+                              <Typography noWrap>
+                                <Button
+                                  onClick={() => setSelectedUpdatePackage(user)}
                                 >
-                                  <LaunchTwoToneIcon fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                              <Tooltip title={t("Block")} arrow>
-                                <IconButton
-                                  onClick={handleConfirmDelete}
-                                  color="primary"
-                                >
-                                  <Block fontSize="small" />
-                                </IconButton>
-                              </Tooltip>
-                            </Typography>
-                          </TableCell>
-                        </TableRow>
+                                  Update package
+                                </Button>
+                                <Tooltip title={t("View")} arrow>
+                                  <IconButton
+                                    href={"/management/users/single/" + user.id}
+                                    color="primary"
+                                  >
+                                    <LaunchTwoToneIcon fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                                <Tooltip title={t("Block")} arrow>
+                                  <IconButton
+                                    onClick={() => handleConfirmDelete(user)}
+                                    color="primary"
+                                  >
+                                    <Block fontSize="small" />
+                                  </IconButton>
+                                </Tooltip>
+                              </Typography>
+                            </TableCell>
+                          </TableRow>
+                        </>
                       );
                     })}
                   </TableBody>
@@ -827,7 +886,7 @@ const Results: FC<ResultsProps> = ({
       )}
 
       <DialogWrapper
-        open={openConfirmDelete}
+        open={Boolean(openConfirmDelete)}
         maxWidth="sm"
         fullWidth
         TransitionComponent={Transition}
@@ -915,12 +974,19 @@ const Results: FC<ResultsProps> = ({
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
             console.log(values);
+            // const res = await updateUser({
+            //   subscription: {
+            //     plan: values.subscription.plan,
+            //     expiredAt: values.subscription.expiredAt,
+            //     amount:
+            //   },
+            // });
             const res = await updateUser({
-              ...selectedUpdatePackage,
-              package: values.package,
-              packageExpiry: values.packageExpiry,
+              ...values,
+              blocked: false,
+              blockAfter: dayjs().add(10, "years"),
             });
-            console.log(res);
+            console.log("response", res);
             if (res?.error) {
               handleUpdateUserError(res?.error?.data?.error?.message);
             } else {
@@ -960,13 +1026,13 @@ const Results: FC<ResultsProps> = ({
                       multiple={false}
                       disablePortal
                       options={Package}
-                      value={values?.package}
+                      value={values?.subscription?.plan}
                       onChange={(_, option: { label: string; value: string }) =>
-                        setFieldValue("package", option)
+                        setFieldValue("subscription.plan", option.value)
                       }
                       renderInput={(params) => (
                         <TextField
-                          name="package"
+                          name="subscription.plan"
                           fullWidth
                           {...params}
                           label={t("Package")}
@@ -977,18 +1043,39 @@ const Results: FC<ResultsProps> = ({
 
                   <Grid item xs={12} md={12}>
                     <DatePicker
-                      value={values?.packageExpiry}
+                      value={values?.subscription.expiredAt}
                       onChange={(val: Date) => {
-                        setFieldValue("packageExpiry", val);
+                        setFieldValue("subscription.expiredAt", val);
                       }}
                       renderInput={(params) => (
                         <TextField
                           fullWidth
                           placeholder={t("Select date...")}
                           {...params}
-                          name="sasas"
+                          name="subscription.expiredAt"
                         />
                       )}
+                    />
+                  </Grid>
+
+                  <Grid item xs={12} md={6}>
+                    <TextField
+                      error={Boolean(
+                        touched.subscription?.amount &&
+                          errors.subscription?.amount
+                      )}
+                      fullWidth
+                      helperText={
+                        touched.subscription?.amount &&
+                        errors.subscription?.amount
+                      }
+                      label={t("Subscription amount")}
+                      name="subscription.amount"
+                      onBlur={handleBlur}
+                      type="number"
+                      onChange={handleChange}
+                      value={values?.subscription?.amount}
+                      variant="outlined"
                     />
                   </Grid>
                 </Grid>

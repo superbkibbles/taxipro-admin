@@ -55,6 +55,7 @@ export interface User {
   personalNumber?: string;
   clearingNumber?: number;
   accountNumber?: string;
+  blocked?: boolean;
   bankGiro?: number;
   plusGiro?: number;
   address1?: string;
@@ -933,6 +934,7 @@ export interface UserWithRelations {
   workType?: string;
   workingTime?: string;
   calculateTaxManualy?: boolean;
+  blocked?: boolean;
   taxTable?: string;
   taxPercentage?: number;
   skatTax?: number;

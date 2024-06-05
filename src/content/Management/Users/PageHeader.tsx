@@ -219,7 +219,6 @@ function PageHeader() {
               });
               // @ts-ignore
               if (res.error) {
-                console.log(err);
                 setStatus({ success: false });
                 // @ts-ignore
                 setErrors({ submit: "Error" });
