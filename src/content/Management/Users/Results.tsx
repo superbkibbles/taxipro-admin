@@ -597,7 +597,7 @@ const Results: FC<ResultsProps> = ({
                                   </Link>
                                   <Typography noWrap variant="subtitle2">
                                     {/* {user.jobtitle} */}
-                                    title
+                                    {user.role}
                                   </Typography>
                                 </Box>
                               </Box>

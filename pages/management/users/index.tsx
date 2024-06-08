@@ -27,7 +27,7 @@ function ManagementUsers() {
     filter: JSON.stringify({
       where: {
         role: tabValue === "all" ? undefined : tabValue,
-        name: { like: search },
+        or: [{ name: { like: search } }, { email: { like: search } }],
       },
     }),
   });
