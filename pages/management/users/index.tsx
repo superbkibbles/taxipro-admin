@@ -19,7 +19,7 @@ import { Role } from "@/types";
 function ManagementUsers() {
   const [search, setSearch] = useState("");
   const [tabValue, setTabValue] = useState("all");
-  const { data: users, isLoading: isLoadingDrivers } = useGetUsersQuery({
+  const { data: users, isLoading: isLoadingUsers } = useGetUsersQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
     // }),
@@ -50,6 +50,7 @@ function ManagementUsers() {
       >
         <Grid item xs={12}>
           <Results
+            isLoadingUsers={isLoadingUsers}
             handleTabChange={(value: string) => setTabValue(value)}
             search={search}
             onSearchChange={setSearch}

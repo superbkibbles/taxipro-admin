@@ -42,6 +42,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import Link from "src/components/Link";
+import LockOpenIcon from "@mui/icons-material/LockOpen";
 
 import { TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
@@ -63,6 +64,7 @@ import { Package } from "./PageHeader";
 import { DatePicker } from "@mui/lab";
 import { Formik } from "formik";
 import { useUpdateUserMutation } from "@/services/user";
+import { usePutAdminCompaniesByIdMutation } from "@/services/companies";
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -150,6 +152,7 @@ interface ResultsProps {
   onSearchChange: (value: string) => void;
   search: string;
   handleTabChange: (value: string) => void;
+  isLoadingUsers: boolean;
 }
 
 interface Filters {
@@ -234,6 +237,7 @@ const applyPagination = (
 const Results: FC<ResultsProps> = ({
   users,
   onSearchChange,
+  isLoadingUsers,
   search,
   handleTabChange,
 }) => {
@@ -375,9 +379,10 @@ const Results: FC<ResultsProps> = ({
     // }
     const res = await updateUser({
       ...openConfirmDelete,
-      isActive: true,
-      deleted: true,
-      blocked: true,
+      isActive: openConfirmDelete?.blocked ? true : false,
+      // deleted: openConfirmDelete?.blocked? false: true,
+      blockAfter: dayjs().add(10, "years"),
+      blocked: openConfirmDelete?.blocked ? false : true,
     });
     if (res?.error) {
       enqueueSnackbar(t("Error happened when blocking the user"), {
@@ -388,18 +393,21 @@ const Results: FC<ResultsProps> = ({
         },
         TransitionComponent: Zoom,
       });
-    }
-    console.log(res);
-    // setOpenConfirmDelete(null);
+      setOpenConfirmDelete(null);
+    } else {
+      console.log(res);
+      // setOpenConfirmDelete(null);
 
-    enqueueSnackbar(t("The user account has been blocked"), {
-      variant: "success",
-      anchorOrigin: {
-        vertical: "top",
-        horizontal: "right",
-      },
-      TransitionComponent: Zoom,
-    });
+      enqueueSnackbar(t("The user account has been blocked"), {
+        variant: "success",
+        anchorOrigin: {
+          vertical: "top",
+          horizontal: "right",
+        },
+        TransitionComponent: Zoom,
+      });
+      setOpenConfirmDelete(null);
+    }
   };
 
   return (
@@ -468,6 +476,16 @@ const Results: FC<ResultsProps> = ({
           <Divider />
 
           {paginatedUsers.length === 0 ? (
+            <Box
+              width={"100%"}
+              height={400}
+              display={"flex"}
+              justifyContent={"center"}
+              alignItems={"center"}
+            >
+              <CircularProgress size="3rem" />
+            </Box>
+          ) : paginatedUsers.length === 0 ? (
             <>
               <Typography
                 sx={{
@@ -502,10 +520,12 @@ const Results: FC<ResultsProps> = ({
                         {t("Package expires")}
                       </TableCell>
                       <TableCell>{t("Location")}</TableCell>
+                      <TableCell>{t("Status")}</TableCell>
                       {/* <TableCell>{t("Role")}</TableCell> */}
                       <TableCell align="center">{t("Actions")}</TableCell>
                     </TableRow>
                   </TableHead>
+
                   <TableBody>
                     {paginatedUsers.map((user) => {
                       const isUserSelected = selectedItems.includes(user.id);
@@ -525,13 +545,13 @@ const Results: FC<ResultsProps> = ({
                             </Box>
                           )} */}
                           <TableRow
-                            style={{
-                              // position: "relative",
-                              background: user.blocked
-                                ? "rgba(255, 0, 0, 0.4)"
-                                : "transparent",
-                              filter: user.blocked ? "blur(1px)" : "",
-                            }}
+                            // style={{
+                            //   // position: "relative",
+                            //   background: user.blocked
+                            //     ? "rgba(255, 0, 0, 0.4)"
+                            //     : "transparent",
+                            //   filter: user.blocked ? "blur(1px)" : "",
+                            // }}
                             hover
                             key={user.id}
                             selected={isUserSelected}
@@ -604,6 +624,16 @@ const Results: FC<ResultsProps> = ({
                             <TableCell>
                               <Typography>{user.address1}</Typography>
                             </TableCell>
+                            <TableCell>
+                              {console.log(user)}
+                              {user?.blocked
+                                ? "Blocked"
+                                : user?.deleted
+                                ? "Deleted"
+                                : !user?.isActive
+                                ? "Inactive"
+                                : "Active"}
+                            </TableCell>
                             {/* <TableCell>{getUserRoleLabel(user.role)}</TableCell> */}
                             <TableCell align="center">
                               <Typography noWrap>
@@ -625,7 +655,11 @@ const Results: FC<ResultsProps> = ({
                                     onClick={() => handleConfirmDelete(user)}
                                     color="primary"
                                   >
-                                    <Block fontSize="small" />
+                                    {user.blocked ? (
+                                      <LockOpenIcon fontSize="small" />
+                                    ) : (
+                                      <Block fontSize="small" color="error" />
+                                    )}
                                   </IconButton>
                                 </Tooltip>
                               </Typography>
@@ -890,7 +924,6 @@ const Results: FC<ResultsProps> = ({
         maxWidth="sm"
         fullWidth
         TransitionComponent={Transition}
-        keepMounted
         onClose={closeConfirmDelete}
       >
         <Box
@@ -912,7 +945,9 @@ const Results: FC<ResultsProps> = ({
             }}
             variant="h3"
           >
-            {t("Are you sure you want to block this user account")}?
+            {`Are you sure you want to ${
+              openConfirmDelete?.blocked ? "Unblock" : "Block"
+            } this user account?`}
           </Typography>
 
           <Box>
@@ -926,17 +961,34 @@ const Results: FC<ResultsProps> = ({
             >
               {t("Cancel")}
             </Button>
-            <ButtonError
-              onClick={handleDeleteCompleted}
-              size="large"
-              sx={{
-                mx: 1,
-                px: 3,
-              }}
-              variant="contained"
-            >
-              {t("Block")}
-            </ButtonError>
+
+            {openConfirmDelete?.blocked ? (
+              <ButtonSuccess
+                endIcon={isLoading && <CircularProgress size="1rem" />}
+                onClick={handleDeleteCompleted}
+                size="large"
+                sx={{
+                  mx: 1,
+                  px: 3,
+                }}
+                variant="contained"
+              >
+                Unblock
+              </ButtonSuccess>
+            ) : (
+              <ButtonError
+                endIcon={isLoading && <CircularProgress size="1rem" />}
+                onClick={handleDeleteCompleted}
+                size="large"
+                sx={{
+                  mx: 1,
+                  px: 3,
+                }}
+                variant="contained"
+              >
+                Block
+              </ButtonError>
+            )}
           </Box>
         </Box>
       </DialogWrapper>
