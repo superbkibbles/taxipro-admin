@@ -146,7 +146,7 @@ function Header() {
         >
           <Logo />
         </Box>
-        <HeaderSearch />
+        {/* <HeaderSearch /> */}
       </Box>
       <Box display="flex" alignItems="center">
         {/* <HeaderButtons /> */}
