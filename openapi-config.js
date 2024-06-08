@@ -52,6 +52,10 @@ const config = {
       filterEndpoints: [/tags/i],
       tag: true,
     },
+    "./src/services/admin.ts": {
+      filterEndpoints: [/admin/i],
+      tag: true,
+    },
   },
 
   exportName: "apis",

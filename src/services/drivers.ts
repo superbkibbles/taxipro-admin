@@ -341,6 +341,8 @@ export type User = {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -482,6 +484,8 @@ export type UserPartial = {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -965,6 +969,8 @@ export type UserWithRelations = {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -1122,6 +1128,8 @@ export type NewUser = {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;

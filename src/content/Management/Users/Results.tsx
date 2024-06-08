@@ -65,6 +65,7 @@ import { DatePicker } from "@mui/lab";
 import { Formik } from "formik";
 import { useUpdateUserMutation } from "@/services/user";
 import { usePutAdminCompaniesByIdMutation } from "@/services/companies";
+import { usePatchAdminUsersByIdMutation } from "@/services/admin";
 
 const DialogWrapper = styled(Dialog)(
   () => `
@@ -245,7 +246,8 @@ const Results: FC<ResultsProps> = ({
   const [selectedUpdatePackage, setSelectedUpdatePackage] = useState(null);
   const { t }: { t: any } = useTranslation();
   const { enqueueSnackbar } = useSnackbar();
-  const [updateUser, { isLoading }] = useUpdateUserMutation();
+  // const [updateUser, { isLoading }] = useUpdateUserMutation();
+  const [updateUserById, { isLoading }] = usePatchAdminUsersByIdMutation();
 
   const handleUpdateUserError = (e: string) => {
     enqueueSnackbar(t(e), {
@@ -377,12 +379,22 @@ const Results: FC<ResultsProps> = ({
     // if (openConfirmDelete?.role === Role.Company) {
     // } else if (openConfirmDelete?.role === Role.User) {
     // }
-    const res = await updateUser({
-      ...openConfirmDelete,
-      isActive: openConfirmDelete?.blocked ? true : false,
-      // deleted: openConfirmDelete?.blocked? false: true,
-      blockAfter: dayjs().add(10, "years"),
-      blocked: openConfirmDelete?.blocked ? false : true,
+    // const res = await updateUser({
+    //   ...openConfirmDelete,
+    //   isActive: openConfirmDelete?.blocked ? true : false,
+    //   // deleted: openConfirmDelete?.blocked? false: true,
+    //   blockAfter: dayjs().add(10, "years"),
+    //   blocked: openConfirmDelete?.blocked ? false : true,
+    // });
+    const res = await updateUserById({
+      id: openConfirmDelete?.id,
+      userPartial: {
+        // ...openConfirmDelete,
+
+        isActive: openConfirmDelete?.blocked ? true : false,
+        // deleted: openConfirmDelete?.blocked? false: true,
+        blocked: openConfirmDelete?.blocked ? false : true,
+      },
     });
     if (res?.error) {
       enqueueSnackbar(t("Error happened when blocking the user"), {
@@ -579,6 +591,7 @@ const Results: FC<ResultsProps> = ({
                             />
                           </TableCell> */}
                             <TableCell>
+                              {console.log(user)}
                               <Typography variant="h5">{user.name}</Typography>
                             </TableCell>
                             <TableCell>
@@ -625,7 +638,6 @@ const Results: FC<ResultsProps> = ({
                               <Typography>{user.address1}</Typography>
                             </TableCell>
                             <TableCell>
-                              {console.log(user)}
                               {user?.blocked
                                 ? "Blocked"
                                 : user?.deleted
@@ -1033,10 +1045,18 @@ const Results: FC<ResultsProps> = ({
             //     amount:
             //   },
             // });
-            const res = await updateUser({
-              ...values,
-              blocked: false,
-              blockAfter: dayjs().add(10, "years"),
+            // const res = await updateUser({
+            //   ...values,
+            //   blocked: false,
+            //   blockAfter: dayjs().add(10, "years"),
+            // });
+            const res = await updateUserById({
+              id: selectedUpdatePackage?.id,
+              userPartial: {
+                ...values,
+                blocked: false,
+                blockAfter: dayjs().add(10, "years"),
+              },
             });
             console.log("response", res);
             if (res?.error) {

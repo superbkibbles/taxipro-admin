@@ -806,6 +806,8 @@ export type UserWithRelations = {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   createdAt?: string;
   updatedAt?: string;

@@ -15,11 +15,12 @@ import { useGetUserQuery, useGetUsersQuery } from "@/services/user";
 import { useGetDriversQuery } from "@/services/drivers";
 import Results from "@/content/Management/Users/Results";
 import { Role } from "@/types";
+import { useGetAdminUsersQuery } from "@/services/admin";
 
 function ManagementUsers() {
   const [search, setSearch] = useState("");
   const [tabValue, setTabValue] = useState("all");
-  const { data: users, isLoading: isLoadingUsers } = useGetUsersQuery({
+  const { data: users, isLoading: isLoadingUsers } = useGetAdminUsersQuery({
     // filter: JSON.stringify({
     //   where: { role: "User" },
     // }),

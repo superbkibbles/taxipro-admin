@@ -55,7 +55,6 @@ export interface User {
   personalNumber?: string;
   clearingNumber?: number;
   accountNumber?: string;
-  blocked?: boolean;
   bankGiro?: number;
   plusGiro?: number;
   address1?: string;
@@ -190,6 +189,9 @@ export interface User {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  /** @format date-time */
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   /** @format date-time */
   createdAt?: string;
@@ -350,6 +352,9 @@ export interface UserPartial {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  /** @format date-time */
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   /** @format date-time */
   createdAt?: string;
@@ -934,7 +939,6 @@ export interface UserWithRelations {
   workType?: string;
   workingTime?: string;
   calculateTaxManualy?: boolean;
-  blocked?: boolean;
   taxTable?: string;
   taxPercentage?: number;
   skatTax?: number;
@@ -992,6 +996,9 @@ export interface UserWithRelations {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  /** @format date-time */
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   /** @format date-time */
   createdAt?: string;
@@ -1876,6 +1883,9 @@ export interface NewUser {
   driversCount?: number;
   sellCarsCount?: number;
   jobsCount?: number;
+  /** @format date-time */
+  blockAfter?: string;
+  blocked?: boolean;
   canCreateAds?: boolean;
   /** @format date-time */
   createdAt?: string;
@@ -3824,6 +3834,8 @@ export interface UserFilter {
         driversCount?: boolean;
         sellCarsCount?: boolean;
         jobsCount?: boolean;
+        blockAfter?: boolean;
+        blocked?: boolean;
         canCreateAds?: boolean;
         createdAt?: boolean;
         updatedAt?: boolean;
@@ -3907,6 +3919,8 @@ export interface UserFilter {
         | "driversCount"
         | "sellCarsCount"
         | "jobsCount"
+        | "blockAfter"
+        | "blocked"
         | "canCreateAds"
         | "createdAt"
         | "updatedAt"
@@ -4010,6 +4024,8 @@ export interface UserFilter1 {
         driversCount?: boolean;
         sellCarsCount?: boolean;
         jobsCount?: boolean;
+        blockAfter?: boolean;
+        blocked?: boolean;
         canCreateAds?: boolean;
         createdAt?: boolean;
         updatedAt?: boolean;
@@ -4093,6 +4109,8 @@ export interface UserFilter1 {
         | "driversCount"
         | "sellCarsCount"
         | "jobsCount"
+        | "blockAfter"
+        | "blocked"
         | "canCreateAds"
         | "createdAt"
         | "updatedAt"
