@@ -376,16 +376,6 @@ const Results: FC<ResultsProps> = ({
   };
 
   const handleDeleteCompleted = async () => {
-    // if (openConfirmDelete?.role === Role.Company) {
-    // } else if (openConfirmDelete?.role === Role.User) {
-    // }
-    // const res = await updateUser({
-    //   ...openConfirmDelete,
-    //   isActive: openConfirmDelete?.blocked ? true : false,
-    //   // deleted: openConfirmDelete?.blocked? false: true,
-    //   blockAfter: dayjs().add(10, "years"),
-    //   blocked: openConfirmDelete?.blocked ? false : true,
-    // });
     const res = await updateUserById({
       id: openConfirmDelete?.id,
       userPartial: {
@@ -407,9 +397,6 @@ const Results: FC<ResultsProps> = ({
       });
       setOpenConfirmDelete(null);
     } else {
-      console.log(res);
-      // setOpenConfirmDelete(null);
-
       enqueueSnackbar(t("The user account has been blocked"), {
         variant: "success",
         anchorOrigin: {
@@ -591,7 +578,6 @@ const Results: FC<ResultsProps> = ({
                             />
                           </TableCell> */}
                             <TableCell>
-                              {console.log(user)}
                               <Typography variant="h5">{user.name}</Typography>
                             </TableCell>
                             <TableCell>
@@ -1037,7 +1023,6 @@ const Results: FC<ResultsProps> = ({
             values: User,
             { resetForm, setErrors, setStatus, setSubmitting }
           ) => {
-            console.log(values);
             // const res = await updateUser({
             //   subscription: {
             //     plan: values.subscription.plan,
@@ -1058,7 +1043,6 @@ const Results: FC<ResultsProps> = ({
                 blockAfter: dayjs().add(10, "years"),
               },
             });
-            console.log("response", res);
             if (res?.error) {
               handleUpdateUserError(res?.error?.data?.error?.message);
             } else {
