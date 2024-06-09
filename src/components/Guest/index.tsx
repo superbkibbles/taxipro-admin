@@ -14,21 +14,21 @@ export const Guest: FC<GuestProps> = (props) => {
   const router = useRouter();
   const [verified, setVerified] = useState(false);
 
-  useEffect(() => {
-    if (!router.isReady) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!router.isReady) {
+  //     return;
+  //   }
 
-    if (auth.isAuthenticated) {
-      router.push("/management/users");
-    } else {
-      setVerified(true);
-    }
-  }, [router.isReady]);
+  //   // if (auth.isAuthenticated) {
+  //   //   router.push("/management/users");
+  //   // } else {
+  //   //   setVerified(true);
+  //   // }
+  // }, [router.isReady]);
 
-  if (!verified) {
-    return null;
-  }
+  // if (!verified) {
+  //   return null;
+  // }
 
   return <>{children}</>;
 };
