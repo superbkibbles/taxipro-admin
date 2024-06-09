@@ -1,4 +1,4 @@
-import { useState, useCallback, ChangeEvent, useEffect } from "react";
+import { useState } from "react";
 
 import Head from "next/head";
 
@@ -19,32 +19,18 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  Checkbox,
   TableBody,
   Typography,
   Avatar,
   Link,
   Tooltip,
   IconButton,
-  TablePagination,
 } from "@mui/material";
 
-import type { User } from "src/models/user";
-import { usersApi } from "src/mocks/users";
-
-import { useRefMounted } from "src/hooks/useRefMounted";
 import { useTranslation } from "react-i18next";
 
 import ProfileCover from "src/content/Management/Users/single/ProfileCover";
 import RecentActivity from "src/content/Management/Users/single/RecentActivity";
-import Feed from "src/content/Management/Users/single/Feed";
-import PopularTags from "src/content/Management/Users/single/PopularTags";
-import MyCards from "src/content/Management/Users/single/MyCards";
-import Addresses from "src/content/Management/Users/single/Addresses";
-import ActivityTab from "src/content/Management/Users/single/ActivityTab";
-import EditProfileTab from "src/content/Management/Users/single/EditProfileTab";
-import NotificationsTab from "src/content/Management/Users/single/NotificationsTab";
-import SecurityTab from "src/content/Management/Users/single/SecurityTab";
 import { useGetUserByIdQuery, useGetUsersQuery } from "@/services/user";
 import { useRouter } from "next/router";
 import { Role } from "@/types";
@@ -65,12 +51,6 @@ function ManagementUsersView() {
     filter: JSON.stringify({
       where: { role: "User", creatorId: router?.query?.userId as string },
     }),
-    // filter: JSON.stringify({
-    //   where: {
-    //     role: tabValue === "all" ? undefined : tabValue,
-    //     name: { like: search },
-    //   },
-    // }),
   });
 
   const [page, setPage] = useState<number>(0);
@@ -96,10 +76,6 @@ function ManagementUsersView() {
       value: "cars",
       label: t("Cars"),
     },
-    // {
-    //   value: "User",
-    //   label: t("Drivers"),
-    // },
   ];
 
   const handleTabsChange = (_event: ChangeEvent<{}>, value: string): void => {

@@ -379,10 +379,8 @@ const Results: FC<ResultsProps> = ({
     const res = await updateUserById({
       id: openConfirmDelete?.id,
       userPartial: {
-        // ...openConfirmDelete,
-
         isActive: openConfirmDelete?.blocked ? true : false,
-        // deleted: openConfirmDelete?.blocked? false: true,
+        deleted: openConfirmDelete?.blocked ? false : true,
         blocked: openConfirmDelete?.blocked ? false : true,
       },
     });
@@ -543,6 +541,10 @@ const Results: FC<ResultsProps> = ({
                               <ButtonSuccess>unblock user</ButtonSuccess>
                             </Box>
                           )} */}
+                          {console.log("blocked", user.blocked)}
+                          {console.log("active", user.isActive)}
+                          {console.log("deleeted", user.deleted)}
+
                           <TableRow
                             // style={{
                             //   // position: "relative",
