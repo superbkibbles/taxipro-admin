@@ -34,6 +34,9 @@ import RecentActivity from "src/content/Management/Users/single/RecentActivity";
 import { useGetUserByIdQuery, useGetUsersQuery } from "@/services/user";
 import { useRouter } from "next/router";
 import { Role } from "@/types";
+import { useGetDriversByIdQuery } from "@/services/drivers";
+import { useGetAdminCarsByIdQuery, useGetCarsByIdQuery } from "@/services/cars";
+import { useGetAdminCarsQuery } from "@/services/admin";
 
 const TabsWrapper = styled(Tabs)(
   () => `
@@ -63,6 +66,12 @@ function ManagementUsersView() {
     // }),
     id: router?.query?.userId as string,
     filter: undefined,
+  });
+
+  const { data: cars, isLoading: isLoadingCars } = useGetAdminCarsQuery({
+    filter: JSON.stringify({
+      where: { userId: router?.query?.userId as string },
+    }),
   });
 
   const [currentTab, setCurrentTab] = useState<string>(Role.User);
@@ -112,7 +121,7 @@ function ManagementUsersView() {
             <ProfileCover user={user} />
           </Grid>
           <Grid item xs={12} md={4}>
-            <RecentActivity drivers={users?.length} cars={21} />
+            <RecentActivity drivers={users?.length} cars={cars?.length} />
           </Grid>
           {/* <Grid item xs={12} md={8}>
             <Feed />
