@@ -1101,7 +1101,7 @@ const Results: FC<ResultsProps> = ({
 
                   <Grid item xs={12} md={12}>
                     <DatePicker
-                      value={values?.subscription.expiredAt}
+                      value={values?.subscription?.expiredAt}
                       onChange={(val: Date) => {
                         setFieldValue("subscription.expiredAt", val);
                       }}
